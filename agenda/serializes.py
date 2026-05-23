@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from django.utils import timezone
 from django.contrib.auth.models import User
+from .utils import get_horario_diponivel
 
 
 class AgendamentoSerializer(serializers.ModelSerializer):
@@ -24,6 +25,8 @@ class AgendamentoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Eventos não podem ser gravado no passado!")
         elif horarios_agendamento.exists():
             raise serializers.ValidationError("Já existe um agendamento para essa data!")
+        if value not in get_horario_diponivel(value.date()):
+            raise serializers.ValidationError("esse horario não está disponivel!")
         return value
 
     def validate(self, attrs):

@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from .models import Agendamento
@@ -53,5 +55,14 @@ class Prestador_list(generics.ListAPIView):
     serializer_class = PrestadorSerializer
     queryset = User.objects.all()
 
+@api_view(['GET'])
+def get_horarios(request):
+    data = request.query_params.get('data', None)
+    if not data:
+        data = datetime.now().date()
+    else:
+        data = datetime.fromisoformat(data).date()
+    
+    get_horarios = sorted(list.get_horario_diponivel(data))
+    return JsonResponse(get_horarios, safe=False)
 
-        
