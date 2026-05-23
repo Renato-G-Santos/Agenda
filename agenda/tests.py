@@ -31,3 +31,8 @@ class test_criacao_agendamento(APITestCase):
         self.assertEqual(agendamento_obj.nome, data['nome'])
         self.assertEqual(response.status_code, 201)
         self.assertDictEqual(resp, agendamentoSerializer)
+
+class test_bad_resquest_inexistente_404(APITestCase):
+    def test_bad_resquest_inexistente_404(self):
+        response = self.client.get(f"/api/agendamentos/1/")
+        self.assertEqual(response.status_code, 404)

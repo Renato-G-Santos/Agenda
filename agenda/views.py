@@ -1,41 +1,57 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from .models import Agendamento
-from .serializes import AgendamentoSerializer
+from .serializes import AgendamentoSerializer, PrestadorSerializer
 from django.http import JsonResponse 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import mixins, generics
+from rest_framework import permissions 
+from django.contrib.auth.models import User
 
 
-# Create your views here.
 
-@api_view(['GET', 'PATCH', 'DELETE'])
-def agendamento_detail(request, id):
-    obj = get_object_or_404(Agendamento, id=id)
-    if request.method == 'GET':
-        serializer = AgendamentoSerializer(obj)
-        return JsonResponse(serializer.data)
-    if request.method in ['PATCH']:
-        serializer = AgendamentoSerializer(obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            
-            return JsonResponse(serializer.data, status=200)
-        return JsonResponse(serializer.errors, status=400)
-    if request.method == 'DELETE':
-        obj.cancelado = True
-        obj.save()
-        return Response(status=204)
+
+
+# views your views here.
+
+class isOwnerCreateOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return True
+        username = request.query_params.get('username', None)
+        if request.user.username == username:
+            return True
+        return False
+
+
+class agendamento_list(generics.ListCreateAPIView):
+    serializer_class = AgendamentoSerializer
+    permission_classes=[isOwnerCreateOnly]
+
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        queryset = Agendamento.objects.filter(prestador__username=username)
+        return queryset
     
-@api_view(['GET', 'POST',])
-def agendamento_list(request):
-    if request.method == 'GET':
-        qs = Agendamento.objects.filter(cancelado=False)
-        serializer = AgendamentoSerializer(qs, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    if request.method == 'POST':
-        serializer = AgendamentoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+class isPrestador(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.prestador == request.user:
+            return True
+        return False
+
+class agendamento_detail(generics.RetrieveUpdateDestroyAPIView
+    ):
+    permission_classes=[isPrestador]
+    queryset = Agendamento.objects.all()
+    serializer_class = AgendamentoSerializer
+
+
+class Prestador_list(generics.ListAPIView):
+    permission_classes=[permissions.IsAdminUser]
+    serializer_class = PrestadorSerializer
+    queryset = User.objects.all()
+
+
+        

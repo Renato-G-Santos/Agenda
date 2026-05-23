@@ -1,12 +1,22 @@
 from rest_framework import serializers
 from .models import *
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class AgendamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agendamento
-        fields = ['id', 'data', 'nome', 'email', 'telefone'] 
+        fields = ['id', 'data', 'nome', 'email', 'telefone', 'prestador'] 
+
+    prestador = serializers.CharField()
+
+    def validate_prestador(self, value):
+        try:
+            prestador_obj = User.objects.get(username=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Username nao encontrado!")
+        return prestador_obj
 
     def validate_data(self, value):
         horarios_agendamento = Agendamento.objects.filter(data=value, cancelado=False)
@@ -22,6 +32,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         if email.endswith(".br") and telefone.startswith("+") and not telefone.startswith("+55"):
             raise serializers.ValidationError("Um email do Brasil deve ter um telefone do Brasil!")
         return attrs
+    
 
     # def create(self, validated_data):
     #     agendamento = Agendamento.objects.create(
@@ -40,3 +51,10 @@ class AgendamentoSerializer(serializers.ModelSerializer):
     #         instance.telefone = validated_data.get('telefone', instance.telefone)
     #         instance.save()
     #         return instance
+
+class PrestadorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'agendamentos']
+
+    agendamentos = AgendamentoSerializer(many=True, read_only=True)
