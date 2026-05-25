@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from .models import Agendamento
@@ -11,6 +9,9 @@ from rest_framework.views import APIView
 from rest_framework import mixins, generics
 from rest_framework import permissions 
 from django.contrib.auth.models import User
+from .utils import get_horario_diponivel
+import datetime
+
 
 
 
@@ -61,8 +62,8 @@ def get_horarios(request):
     if not data:
         data = datetime.now().date()
     else:
-        data = datetime.fromisoformat(data).date()
+        data = datetime.datetime.fromisoformat(data).date()
     
-    get_horarios = sorted(list.get_horario_diponivel(data))
+    get_horarios = sorted(list(get_horario_diponivel(data)))
     return JsonResponse(get_horarios, safe=False)
 

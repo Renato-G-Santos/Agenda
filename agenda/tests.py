@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 import json
 from .models import *
+from unittest import mock
 
 # Create your tests here.
 
@@ -39,4 +40,18 @@ from .models import *
 #         self.assertEqual(response.status_code, 404)
 
 class test_get_horario(APITestCase):
-    def test_retorna_lista_vazia()
+
+    @mock.patch("agenda.libs.brasilapi.is_feriado", return_value=True)
+    def test_retorna_lista_vazia(self, _):
+        response = self.client.get("/api/horarios/?data=2026-12-25")
+        self.assertEqual(response.json(), [])
+
+    @mock.patch("agenda.libs.brasilapi.is_feriado", return_value=False)
+    def quando_lista_dia_comum_retorna_lista_cheia(self, _):
+        response = self.client.get("/api/horarios/?data=2026-12-12")
+        self.assertEqual(response.data[0], "2026-12-12T08:00:00Z")
+        self.assertEqual(response.data[-1], "2026-12-12T17:00:00Z")
+        
+    
+        
+        
