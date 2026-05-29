@@ -1,0 +1,6 @@
+-r requirements/common.txt
+
+gunicorn
+psycopg2-binary
+whitenoise
+dj-database_url
