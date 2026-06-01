@@ -1,4 +1,4 @@
--r requirements/common.txt
+-r requirements/comum.txt
 
 gunicorn
 psycopg2-binary
