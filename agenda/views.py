@@ -50,6 +50,12 @@ class agendamento_detail(generics.RetrieveUpdateDestroyAPIView
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
 
+class Prestador_create(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = PrestadorSerializer
+
+
+
 
 class Prestador_list(generics.ListAPIView):
     permission_classes=[permissions.IsAdminUser]
@@ -67,3 +73,9 @@ def get_horarios(request):
     get_horarios = sorted(list(get_horario_diponivel(data)))
     return JsonResponse(get_horarios, safe=False)
 
+
+
+
+@api_view(['GET'])
+def health_check(request):
+    return JsonResponse({'status': 'ok'}, status=200)
