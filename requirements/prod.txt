@@ -1,1 +1,3 @@
 -r comum.txt
+
+psycopg2-binary
