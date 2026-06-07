@@ -9,5 +9,5 @@ urlpatterns = [
     path('prestadores/', Prestador_list.as_view(), name='prestador_list'),
     path('horarios/', get_horarios, name='get_horarios'),
     path('', health_check, name='health_check'),
-    path('prestadores/create/', Prestador_create.as_view(), name='prestador_create'),
+    path('prestadores/create/', CreateUser.as_view(), name='prestador_create'),
     ]

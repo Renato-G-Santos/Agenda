@@ -36,21 +36,11 @@ class AgendamentoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Um email do Brasil deve ter um telefone do Brasil!")
         return attrs
     
-class PrestadorSerializer(serializers.ModelSerializer):
-
-    password = serializers.CharField(write_only=True)
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']   
-    def create(self, validated_data):
-        
-        password = validated_data.pop('password')
-        
-        user = User.objects.create_superuser(**validated_data)
-        user.set_password(password)
-        user.save()
-        
-        return user
+        fields = ['username','password', 'email']   
+        User.objects
 
     # def create(self, validated_data):
     #     agendamento = Agendamento.objects.create(

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from .models import Agendamento
-from .serializes import AgendamentoSerializer, PrestadorSerializer
+from .models import *
+from .serializes import *
 from django.http import JsonResponse 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -50,9 +50,9 @@ class agendamento_detail(generics.RetrieveUpdateDestroyAPIView
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
 
-class Prestador_create(generics.CreateAPIView):
+class CreateUser(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = PrestadorSerializer
+    serializer_class = UserSerializer
 
 
 
@@ -60,6 +60,7 @@ class Prestador_create(generics.CreateAPIView):
 class Prestador_list(generics.ListAPIView):
     permission_classes=[permissions.IsAdminUser]
     serializer_class = PrestadorSerializer
+    queryset = User.objects
     queryset = User.objects.all()
 
 @api_view(['GET'])
