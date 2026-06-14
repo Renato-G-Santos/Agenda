@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 import json
-from .models import *
+from agenda.models import Agendamento
 from unittest import mock
 
 # Create your tests here.

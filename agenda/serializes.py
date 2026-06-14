@@ -7,18 +7,24 @@ from .utils import get_horario_diponivel
 
 class AgendamentoSerializer(serializers.ModelSerializer):
     class Meta:
+        nome = serializers.ReadOnlyField(source='User.username')
+        email = serializers.ReadOnlyField(source='User.email')
+        telefone = serializers.ReadOnlyField(source='User.telefone')
+
         model = Agendamento
-        fields = ['id', 'data', 'nome', 'email', 'telefone', 'prestador'] 
+        fields = ['id', 'data', 'nome', 'email', 'telefone', 'user_id', 'estabelecimento_id', 'evento_id', 'servico_id', 'cancelado'] 
 
-    prestador = serializers.CharField()
+    write_only_fields = ['user_id', 'estabelecimento_id', 'evento_id', 'servico_id']
+    
+    user_id = serializers.CharField()
 
-    def validate_prestador(self, value):
+    def validate_user(self, value):
         try:
-            prestador_obj = User.objects.get(username=value)
+            user_obj = User.objects.get(id=value)
         except User.DoesNotExist:
-            raise serializers.ValidationError("Username nao encontrado!")
-        return prestador_obj
-
+            raise serializers.ValidationError("User nao encontrado!")
+        return user_obj
+    
     def validate_data(self, value):
         horarios_agendamento = Agendamento.objects.filter(data=value, cancelado=False)
         if value < timezone.now():
@@ -61,6 +67,29 @@ class UserSerializer(serializers.ModelSerializer):
     #         return instance
 
 
+
+
+class EstabelecimentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Estabelecimento
+        fields = ['id', 'nome', 'hr_abertura', 'hr_fechamento', 'dc_estabelecimento', 'endereco_id', 'user_id']
+    
+    endereco = serializers.ReadOnlyField(source='endereco.rua')
+
+class EventoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evento
+        fields = ['id', 'nome', 'dc_evento', 'data_inicio', 'data_fim', 'estabelecimento_id', 'hr_inicio', 'hr_fim', 'user_id']
+
+class ServicoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Servico
+        fields = ['id', 'nome', 'dc_servico', 'duracao', 'vl_servico', 'estabelecimento_id', 'evento_id']
+
+class EnderecoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Endereco
+        fields = ['id', 'rua', 'numero', 'bairro', 'cidade', 'estado', 'cep']
 
 
 

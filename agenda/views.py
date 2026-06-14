@@ -24,7 +24,7 @@ class isOwnerCreateOnly(permissions.BasePermission):
         if request.method == 'POST':
             return True
         username = request.query_params.get('username', None)
-        if request.user.username == username:
+        if request.User.username == username:
             return True
         return False
 
@@ -54,7 +54,21 @@ class CreateUser(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class CreateEndereco(generics.CreateAPIView):
+    queryset = Endereco.objects.all()
+    serializer_class = EnderecoSerializer
 
+class CreateServico(generics.CreateAPIView):
+    queryset = Servico.objects.all()
+    serializer_class = ServicoSerializer
+
+class CreateEstabelecimento(generics.CreateAPIView):
+    queryset = Estabelecimento.objects.all()
+    serializer_class = EstabelecimentoSerializer
+
+class CreateEvento(generics.CreateAPIView):
+    queryset = Evento.objects.all()
+    serializer_class = EventoSerializer
 
 
 class Prestador_list(generics.ListAPIView):
