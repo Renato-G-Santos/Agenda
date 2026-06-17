@@ -31,7 +31,7 @@ class isOwnerCreateOnly(permissions.BasePermission):
 
 class agendamento_list(generics.ListCreateAPIView):
     serializer_class = AgendamentoSerializer
-    permission_classes=[isOwnerCreateOnly]
+    ##permission_classes=[isOwnerCreateOnly]
 
     def get_queryset(self):
         username = self.request.query_params.get('username', None)

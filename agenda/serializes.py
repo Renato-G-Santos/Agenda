@@ -12,11 +12,11 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         telefone = serializers.ReadOnlyField(source='User.telefone')
 
         model = Agendamento
-        fields = ['id', 'data', 'nome', 'email', 'telefone', 'user_id', 'estabelecimento_id', 'evento_id', 'servico_id', 'cancelado'] 
+        fields = ['id', 'data', 'telefone', 'user', 'estabelecimento', 'evento', 'servico', 'cancelado'] 
 
-    write_only_fields = ['user_id', 'estabelecimento_id', 'evento_id', 'servico_id']
+    write_only_fields = ['user', 'estabelecimento', 'evento', 'servico']
     
-    user_id = serializers.CharField()
+    user = serializers.CharField()
 
     def validate_user(self, value):
         try:
@@ -72,19 +72,19 @@ class UserSerializer(serializers.ModelSerializer):
 class EstabelecimentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estabelecimento
-        fields = ['id', 'nome', 'hr_abertura', 'hr_fechamento', 'dc_estabelecimento', 'endereco_id', 'user_id']
+        fields = ['id', 'nome', 'hr_abertura', 'hr_fechamento', 'dc_estabelecimento', 'user', 'endereco']
     
-    endereco = serializers.ReadOnlyField(source='endereco.rua')
+    
 
 class EventoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evento
-        fields = ['id', 'nome', 'dc_evento', 'data_inicio', 'data_fim', 'estabelecimento_id', 'hr_inicio', 'hr_fim', 'user_id']
+        fields = ['id', 'nome', 'dc_evento', 'data_inicio', 'data_fim', 'estabelecimento', 'hr_inicio', 'hr_fim', 'user']
 
 class ServicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servico
-        fields = ['id', 'nome', 'dc_servico', 'duracao', 'vl_servico', 'estabelecimento_id', 'evento_id']
+        fields = ['id', 'nome', 'dc_servico', 'duracao', 'vl_servico', 'estabelecimento', 'evento']
 
 class EnderecoSerializer(serializers.ModelSerializer):
     class Meta:
