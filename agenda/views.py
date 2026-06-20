@@ -11,6 +11,7 @@ from rest_framework import permissions
 from django.contrib.auth.models import User
 from .utils import get_horario_diponivel
 import datetime
+from django.contrib.auth import authenticate
 
 
 
@@ -31,18 +32,29 @@ class isOwnerCreateOnly(permissions.BasePermission):
 
 class agendamento_list(generics.ListCreateAPIView):
     serializer_class = AgendamentoSerializer
-    ##permission_classes=[isOwnerCreateOnly]
+    permission_classes=[isOwnerCreateOnly]
 
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
-        queryset = Agendamento.objects.filter(prestador__username=username)
+        queryset = Agendamento.objects.filter(user__username=username)
         return queryset
     
 class isPrestador(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if obj.prestador == request.user:
+        if obj.User == request.user:
             return True
         return False
+
+class login(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username="john", password="secret")
+        if user is not None:
+            return Response({'message': 'Login successful'})
+        else:
+            return Response({'message': 'Invalid credentials'}, status=401)
+    
 
 class agendamento_detail(generics.RetrieveUpdateDestroyAPIView
     ):
@@ -73,7 +85,7 @@ class CreateEvento(generics.CreateAPIView):
 
 class Prestador_list(generics.ListAPIView):
     permission_classes=[permissions.IsAdminUser]
-    serializer_class = PrestadorSerializer
+    serializer_class = UserSerializer
     queryset = User.objects
     queryset = User.objects.all()
 
