@@ -12,7 +12,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         telefone = serializers.ReadOnlyField(source='User.telefone')
 
         model = Agendamento
-        fields = ['id', 'data', 'telefone', 'user', 'estabelecimento', 'evento', 'servico', 'cancelado'] 
+        fields = ['id', 'data', 'nome', 'email', 'telefone', 'user', 'estabelecimento', 'evento', 'servico', 'cancelado'] 
 
     write_only_fields = ['user', 'estabelecimento', 'evento', 'servico']
     
