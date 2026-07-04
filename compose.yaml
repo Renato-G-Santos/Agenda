@@ -1,6 +1,28 @@
+
+
 services:
   server:
-    build:
+    image: agenda
+    build: 
       context: .
     ports:
       - 8000:8000
+    volumes:
+      - .:/app
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+  redis:
+    image: redis:alpine
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 8025:8025
+  celery:
+    image: agenda
+    build: 
+      context: .
+    volumes:
+      - .:/app
+    command: sh -c "celery -A tamarcado worker Q- cerely --loglevel=info"
+    depends_on:
+      - redis
+      - server
