@@ -84,10 +84,28 @@ class CreateEvento(generics.CreateAPIView):
 
 
 class Prestador_list(generics.ListAPIView):
-    permission_classes=[permissions.IsAdminUser]
+    #permission_classes=[permissions.IsAdminUser]
     serializer_class = UserSerializer
     queryset = User.objects
     queryset = User.objects.all()
+
+
+@api_view(['GET'])
+def relatorio_prestadores(request):
+    prestadores = User.objects.all()
+    relatorio = []
+    for prestador in prestadores:
+        agendamentos = Agendamento.objects.filter(user=prestador)
+        total_agendamentos = agendamentos.count()
+        total_cancelados = agendamentos.filter(status='cancelado').count()
+        total_concluidos = agendamentos.filter(status='concluido').count()
+        relatorio.append({
+            'prestador': prestador.username,
+            'total_agendamentos': total_agendamentos,
+            'total_cancelados': total_cancelados,
+            'total_concluidos': total_concluidos
+        })
+    return JsonResponse(relatorio, safe=False)
 
 @api_view(['GET'])
 def get_horarios(request):

@@ -9,6 +9,7 @@ urlpatterns = [
     path('prestadores/', Prestador_list.as_view(), name='prestador_list'),
     path('horarios/', get_horarios, name='get_horarios'),
     path('', health_check, name='health_check'),
+    path('relatorio/prestadores/', relatorio_prestadores, name='relatorio_prestadores'),
     path('prestadores/create/', CreateUser.as_view(), name='prestador_create'),
     path('enderecos/create/', CreateEndereco.as_view(), name='endereco_create'),
     path('servicos/create/', CreateServico.as_view(), name='servico_create'),
